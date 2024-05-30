@@ -1,7 +1,13 @@
-use std::thread::{self, JoinHandle};
+use std::{
+    sync::{mpsc, Arc, Mutex},
+    thread,
+};
+
+struct Job;
 
 pub struct ThreadPool {
     workers: Vec<Worker>,
+    sender: mpsc::Sender<Job>,
 }
 
 impl ThreadPool {
@@ -15,13 +21,15 @@ impl ThreadPool {
     pub fn new(size: usize) -> ThreadPool {
         assert!(size > 0);
 
+        let (sender, receiver) = mpsc::channel();
+
         let mut workers = Vec::with_capacity(size);
 
-        for i in 0..size {
-            workers.push(Worker::new(i));
+        for id in 0..size {
+            workers.push(Worker::new(id, receiver));
         }
 
-        ThreadPool { workers }
+        ThreadPool { workers, sender }
     }
 
     pub fn execute<F>(&self, f: F)
@@ -34,12 +42,14 @@ impl ThreadPool {
 
 struct Worker {
     id: usize,
-    thread: JoinHandle<()>
+    thread: thread::JoinHandle<()>
 }
 
 impl Worker {
-    pub fn new(id: usize) -> Worker {
-        let thread = thread::spawn(|| { }); 
+    fn new(id: usize, receiver: mpsc::Receiver<Job>) -> Worker {
+        let thread = thread::spawn(|| { 
+            receiver;
+        }); 
 
         Worker { id, thread }
     }
