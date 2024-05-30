@@ -5,6 +5,7 @@ use std::{
     thread,
     time::Duration,
 };
+use rustweb::ThreadPool;
 
 fn handle_connection(mut stream: TcpStream) {
     let buf_reader = BufReader::new(&mut stream);
@@ -40,4 +41,3 @@ fn main() {
         });
     }
 }
-
