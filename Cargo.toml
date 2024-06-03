@@ -1,10 +1,11 @@
 [package]
 name = "rustweb"
 version = "0.1.0"
-edition = "2021"
-
-[lib]
-name = "rustweb"
-path = "src/lib.rs"
+edition = "2018"
 
 [dependencies]
+tokio = { version = "1", features = ["full"] }
+
+[[bin]]
+name = "rustweb"
+path = "src/main.rs"
