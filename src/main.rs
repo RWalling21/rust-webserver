@@ -2,6 +2,22 @@ use tokio::net::{TcpListener, TcpStream};
 use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
 use tokio::time::{sleep, Duration};
 
+/// Handles an incoming TCP connection.
+///
+/// # Arguments
+///
+/// * `stream` - A mutable `TcpStream` representing the incoming TCP connection.
+///
+/// # Behavior
+///
+/// The function reads the request line from the stream using a buffered reader.
+/// Depending on the request line, it determines the status line and the filename
+/// of the HTML file to be served.
+///
+/// # Errors
+///
+/// This function will panic if reading from the stream, reading the file, or
+/// writing to the stream fails.
 async fn handle_connection(mut stream: TcpStream) {
     let mut buf_reader = BufReader::new(&mut stream);
     let mut request_line = String::new();
